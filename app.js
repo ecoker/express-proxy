@@ -21,19 +21,20 @@ app.use('/*', proxy('api.famousfootwear.com', {
 		    opt_o = {};
 		    for (var j=0;j<opt.length;j++) {
 		    	var pairs = opt[j].replace(/^\s+|\s+$|;/,'').split('=');
-		    	if (/domain/i.test(pairs[0])) {
-		    		pairs[1] = pairs[1].replace(/\.?[A-z]+\.com/i, 'localhost');
-		    	} else if (/expire/i.test(pairs[0])) {
+		    	if (/expire/i.test(pairs[0])) {
 		    		pairs[1] = new Date(pairs[1]);
 		    	}
-		    	opt_o[ pairs[0] ] = pairs[1];
+		    	if (!/domain/i.test(pairs[0])) {
+		    		// NOTE: COOKIES ARE INVALID WITH A DOMAIN NAME OF "LOCALHOST" SO WE'RE NOT SETTING THE DOMAIN
+		    		opt_o[ pairs[0] ] = pairs[1];
+		    	}
 		    }
 		    var nameVal = cookies[i].split(';')[0];
 		    res.cookie(nameVal.split('=')[0], nameVal.split('=')[1], opt_o);
 	    }
     }
     /* //end SET COOKIES ON LOCALHOST --- */
-
+    
 		callback(null, data);
   }
 }));
